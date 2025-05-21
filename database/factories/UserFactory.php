@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
@@ -15,14 +17,20 @@ class UserFactory extends Factory
      *
      * @return array<string, mixed>
      */
+
+    protected $model = User::class;
+
     public function definition()
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'role_id' => 2,
+            'name' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'avatar' => 'users/default.png',
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
+            'settings' => null,
         ];
     }
 
@@ -36,5 +44,23 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    public function admin()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'role_id' => 1, // Assuming 1 is the ID for the 'admin' role in Voyager's roles table
+            ];
+        });
+    }
+
+    public function regularUser()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'role_id' => 2, // Assuming 2 is the ID for a 'user' or 'regular' role in Voyager's roles table
+            ];
+        });
     }
 }
