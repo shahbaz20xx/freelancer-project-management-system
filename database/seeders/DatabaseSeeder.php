@@ -7,6 +7,8 @@ namespace Database\Seeders;
 use App\Models\Application;
 use App\Models\Invoice;
 use App\Models\Project;
+use App\Models\ProjectCategory;
+use App\Models\ProjectType;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -30,6 +32,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::factory()->regularUser()->count(20)->create();
+
+        ProjectType::factory()->count(5)->create();
+
+        ProjectCategory::factory()->count(10)->create();
 
         Project::factory()->count(30)->create();
 

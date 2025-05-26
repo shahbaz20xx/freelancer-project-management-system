@@ -91,7 +91,7 @@
                                 @endif --}}
 
                                 @if (Auth::check())
-                                    <a href="javascript:void(0)" onclick="applyProject({{ $project->id }})"
+                                    <a href="javascript:void(0)" onclick="applyOnProject({{ $project->id }})"
                                         class="btn btn-primary">Apply</a>
                                 @else
                                     <a href="javascript:void(0)" class="btn btn-primary disabled">Login to Apply</a>
@@ -103,7 +103,7 @@
                     </div>
 
                     @if (Auth::user())
-                        @if (Auth::user()->id == $project->user_id)
+                        @if (Auth::user()->id == $project->client_id)
 
                             <div class="card shadow border-0 mt-4">
                                 <div class="project_details_header">
@@ -112,7 +112,6 @@
 
                                             <div class="projects_conetent">
                                                 <h4>Applicants</h4>
-
                                             </div>
                                         </div>
                                         <div class="projects_right"></div>
@@ -123,15 +122,17 @@
                                         <tr>
                                             <th>Name</th>
                                             <th>Email</th>
-                                            <th>Mobile</th>
+                                            <th>Cover Letter</th>
+                                            <th>Application Status</th>
                                             <th>Applied Date</th>
                                         </tr>
                                         @if ($applications->isNotEmpty())
                                             @foreach ($applications as $application)
                                                 <tr>
-                                                    <td>{{ $application->user->name }}</td>
-                                                    <td>{{ $application->user->email }}</td>
-                                                    <td>{{ $application->user->mobile }}</td>
+                                                    <td>{{ $application->recruiter->name }}</td>
+                                                    <td>{{ $application->recruiter->email }}</td>
+                                                    <td>{{ $application->cover_letter }}</td>
+                                                    <td>{{ $application->status }}</td>
                                                     <td> {{ \Carbon\Carbon::parse($application->applied_date)->format('d M, Y') }}
                                                     </td>
                                                 </tr>
@@ -205,5 +206,22 @@
 
 
 @section('customJs')
-    <script type="text/javascript"></script>
+    <script type="text/javascript">
+        function applyOnProject(id) {
+
+            if (confirm('Are you sure you want to apply on this job?')) {
+                $.ajax({
+                    type: "POST",
+                    url: '{{ route('applyProject') }}',
+                    data: {
+                        id: id
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        window.location.href = "{{ url()->current() }}";
+                    }
+                });
+            }
+        }
+    </script>
 @endsection

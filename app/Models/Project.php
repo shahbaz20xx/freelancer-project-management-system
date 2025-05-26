@@ -9,7 +9,7 @@ class Project extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'client_id', 'recruiter_id', 'status', 'budget', 'billing_type'];
+    protected $fillable = ['title', 'description', 'client_id', 'recruiter_id', 'project_category_id', 'project_type_id', 'status', 'budget', 'billing_type'];
 
     public function client()
     {
@@ -34,5 +34,13 @@ class Project extends Model
     public function invoice() // Corrected method name
     {
         return $this->hasOne(Invoice::class); // Assuming one invoice per project
+    }
+
+    public function projectType(){
+        return $this->belongsTo(ProjectType::class);
+    }
+
+    public function projectCategory(){
+        return $this->belongsTo(ProjectCategory::class);
     }
 }
