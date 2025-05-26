@@ -31,7 +31,7 @@
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                         <a class="{{ Request::is('account/my-jobs') ? 'light-green' : '' }}"
-                            href="{{ route('account.profile') }}">My Jobs</a>
+                            href="{{ route('account.myProjects') }}">My Projects</a>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                         <a class="{{ Request::is('account/my-jobs-applications') ? 'light-green' : '' }}"

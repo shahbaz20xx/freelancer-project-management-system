@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Project;
+use App\Models\ProjectCategory;
+use App\Models\ProjectType;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -170,6 +173,102 @@ class UserAccountController extends Controller
                 'errors' => $validator->errors(),
             ]);
         }
+    }
+
+    public function myProjects()
+    {
+
+        //metioned the code of the paginator in AppServiceProvider Class otherwise your paginator will not work perfectly
+
+        $projects = Project::where('client_id', Auth::user()->id)->with('projectType')->orderBy('created_at', 'DESC')->paginate(10);
+        return view('account.project.my-projects', [
+            'projects' => $projects,
+        ]);
+    }
+
+    public function editProject($id)
+    {
+        $projectCategories = ProjectCategory::orderBy('name', 'ASC')->where('status', 1)->get();
+        $projectTypes = ProjectType::orderBy('name', 'ASC')->where('status', 1)->get();
+
+        // If user write another user id through url show him 404 page
+        $project = Project::where([
+            'client_id' => Auth::user()->id,
+            'id' => $id,
+        ])->first();
+
+        if ($project == null) {
+            abort(404);
+        }
+
+        return view('account.project.edit', [
+            'categories' => $projectCategories,
+            'project_types' => $projectTypes,
+            'project' => $project,
+        ]);
+    }
+
+    // Update project
+    public function updateProject($projectId, Request $request)
+    {
+
+        $rules = [
+            'title' => 'required|min:5|max:200',
+            'projectCategory' => 'required',
+            'projectType' => 'required',
+            'description' => 'required',
+            'experience' => 'required',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->passes()) {
+
+            $project = Project::find($projectId);
+            $project->title = $request->title;
+            $project->category_id = $request->category;
+            $project->project_type_id = $request->projectType;
+            $project->client_id = Auth::user()->id;
+            $project->budget = $request->budget;
+            $project->description = $request->description;
+            $project->responsibility = $request->responsibility;
+            $project->qualifications = $request->qualifications;
+            $project->experience = $request->experience;
+            $project->save();
+
+            Session()->flash('success', 'Project updated successfully.');
+            return response()->json([
+                'status' => true,
+                'errors' => [],
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors(),
+            ]);
+        }
+    }
+
+
+    // This method will delete project
+    public function deleteProject(Request $request)
+    {
+        $project = Project::where([
+            'client_id' => Auth::user()->id,
+            'id' => $request->projectId,
+        ])->first();
+
+        if ($project == null) {
+            Session()->flash('error', 'Either Project deleted or not found.');
+            return response()->json([
+                'status' => true,
+            ]);
+        }
+
+        Project::where('id', $request->projectId)->delete();
+        Session()->flash('success', 'Project deleted successfully.');
+        return response()->json([
+            'status' => true,
+        ]);
     }
 
     public function logout()

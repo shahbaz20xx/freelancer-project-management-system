@@ -19,7 +19,10 @@ use TCG\Voyager\Facades\Voyager;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/projects', [ProjectsController::class, 'index'])->name('projects');
-Route::get('/projects/detail/{id}',[ProjectsController::class,'projectDetail'])->name('projectDetail');
+Route::get('/projects/detail/{id}', [ProjectsController::class, 'projectDetail'])->name('projectDetail');
+
+Route::post('/apply-project',[ProjectsController::class,'applyProject'])->name('applyProject');
+
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
@@ -39,3 +42,11 @@ Route::get('/logout', [UserAccountController::class, 'logout'])->name('account.l
 Route::put('/update-profile', [UserAccountController::class, 'updateProfile'])->name('account.updateProfile');
 Route::post('/update-profile-img', [UserAccountController::class, 'updateProfileImg'])->name('account.updateProfileImg');
 Route::post('/change-password', [UserAccountController::class, 'changePassword'])->name('account.changePassword');
+
+
+Route::get('/my-projects', [UserAccountController::class, 'myProjects'])->name('account.myProjects');
+Route::post('/delete-project', [UserAccountController::class, 'deleteProject'])->name('account.deleteProject');
+
+// test
+Route::get('/edit-project/edit/{projectId}', [UserAccountController::class, 'editProject'])->name('account.editProject');
+Route::post('/update-project/{projectId}', [UserAccountController::class, 'updateProject'])->name('account.updateProject');
