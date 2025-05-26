@@ -17,16 +17,25 @@ use TCG\Voyager\Facades\Voyager;
 |
 */
 
-Route::get('/',[HomeController::class,'index'])->name('home');
-Route::get('/projects',[ProjectsController::class,'index'])->name('projects');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/projects', [ProjectsController::class, 'index'])->name('projects');
+Route::get('/projects/detail/{id}',[ProjectsController::class,'projectDetail'])->name('projectDetail');
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });
 
 Route::group(['middleware' => 'guest'], function () {
-    Route::get('/register',[UserAccountController::class,'registration'])->name('account.registration');
-    Route::post('/process-register',[UserAccountController::class,'processRegistration'])->name('account.processRegistration');
-    Route::get('/login',[UserAccountController::class,'login'])->name('account.login');
-    Route::post('/authenticate',[UserAccountController::class,'authenticate'])->name('account.authenticate');
+    Route::get('/register', [UserAccountController::class, 'registration'])->name('account.registration');
+    Route::post('/process-register', [UserAccountController::class, 'processRegistration'])->name('account.processRegistration');
+    Route::get('/login', [UserAccountController::class, 'login'])->name('account.login');
+    Route::post('/authenticate', [UserAccountController::class, 'authenticate'])->name('account.authenticate');
 });
+
+Route::get('/profile', [UserAccountController::class, 'profile'])->name('account.profile');
+Route::get('/logout', [UserAccountController::class, 'logout'])->name('account.logout');
+
+// test
+Route::put('/update-profile', [UserAccountController::class, 'updateProfile'])->name('account.updateProfile');
+Route::post('/update-profile-img', [UserAccountController::class, 'updateProfileImg'])->name('account.updateProfileImg');
+Route::post('/change-password', [UserAccountController::class, 'changePassword'])->name('account.changePassword');

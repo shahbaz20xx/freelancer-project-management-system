@@ -38,12 +38,12 @@
                         <a class="btn btn-outline-primary me-2" href="{{ route('account.login') }}"
                             type="submit">Login</a>
                     @else
-                        @if (Auth::user()->role == 'admin')
+                        @if (Auth::user()->role && Auth::user()->role->name == 'admin')
+                            <a class="btn btn-outline-primary me-2" href="{{ route('voyager.dashboard') }}"
+                                type="submit">Admin</a>
                         @endif
-                        <a class="btn btn-outline-primary me-2" href="{{ route('voyager.dashboard') }}"
-                            type="submit">Admin</a>
-                        
-                        <a class="btn btn-outline-primary me-2" href="{{ route('account.login') }}"
+
+                        <a class="btn btn-outline-primary me-2" href="{{ route('account.profile') }}"
                             type="submit">Account</a>
                     @endif
                     <a class="btn btn-primary" href="{{ route('account.login') }}" type="submit">Post a Job</a>
@@ -62,7 +62,7 @@
 
     <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/js/jquery-3.6.0.min.js') }}"></script>
-    
+
     <script type="text/javascript">
         $.ajaxSetup({
             headers: {
