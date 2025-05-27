@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Application;
 use App\Models\Project;
 use App\Models\ProjectCategory;
 use App\Models\ProjectType;
@@ -177,10 +178,7 @@ class UserAccountController extends Controller
 
     public function myProjects()
     {
-
-        //metioned the code of the paginator in AppServiceProvider Class otherwise your paginator will not work perfectly
-
-        $projects = Project::where('client_id', Auth::user()->id)->with('projectType')->orderBy('created_at', 'DESC')->paginate(10);
+        $projects = Project::where('client_id', Auth::user()->id)->with('projectType', 'applications')->orderBy('created_at', 'DESC')->paginate(10);
         return view('account.project.my-projects', [
             'projects' => $projects,
         ]);
@@ -268,6 +266,16 @@ class UserAccountController extends Controller
         Session()->flash('success', 'Project deleted successfully.');
         return response()->json([
             'status' => true,
+        ]);
+    }
+
+    public function myProjectApplications()
+    {
+
+        $projectApplications = Application::where('recruiter_id', Auth::user()->id)->with(['project', 'project.projectType', 'project.applications'])->orderBy('created_at', 'DESC')->paginate(10);
+
+        return view('account.project.my-project-applications', [
+            'projectApplications' => $projectApplications,
         ]);
     }
 

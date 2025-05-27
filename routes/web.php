@@ -46,7 +46,10 @@ Route::post('/change-password', [UserAccountController::class, 'changePassword']
 
 Route::get('/my-projects', [UserAccountController::class, 'myProjects'])->name('account.myProjects');
 Route::post('/delete-project', [UserAccountController::class, 'deleteProject'])->name('account.deleteProject');
+Route::get('/my-projects-applications',[UserAccountController::class,'myProjectApplications'])->name('account.myProjectApplications');
 
 // test
 Route::get('/edit-project/edit/{projectId}', [UserAccountController::class, 'editProject'])->name('account.editProject');
 Route::post('/update-project/{projectId}', [UserAccountController::class, 'updateProject'])->name('account.updateProject');
+
+Route::post('/update-application-status', [ProjectsController::class, 'updateApplicationStatus'])->name('updateApplicationStatus');

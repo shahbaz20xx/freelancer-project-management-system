@@ -39,7 +39,7 @@ class ProjectsController extends Controller
 
     public function projectDetail($id)
     {
-        $project = Project::find($id);
+        $project = Project::where('id', $id)->with('client', 'projectType', 'projectCategory')->first();
 
         if ($project == null) {
             abort(404);
@@ -47,10 +47,46 @@ class ProjectsController extends Controller
 
         $applications = Application::where('project_id', $id)->with('recruiter')->get();
 
+        $applied = 0;
+        if (Auth::check()) {
+            $currentUserId = Auth::user()->id;
+            foreach ($applications as $application) {
+                if ($application->recruiter_id === $currentUserId) {
+                    $applied = 1;
+                    $applications = $application;
+                    break;
+                }
+            }
+        }
+
         return view('projectDetail', [
             'project' => $project,
             'applications' => $applications,
+            'applied' => $applied,
         ]);
+    }
+
+    public function updateApplicationStatus(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:applications,id',
+            'status' => 'required|in:accepted,rejected',
+        ]);
+
+        try {
+            $application = Application::find($request->id);
+
+            if ($application) {
+                $application->status = $request->status;
+                $application->save();
+
+                return response()->json(['success' => true, 'message' => 'Application status updated successfully.']);
+            } else {
+                return response()->json(['success' => false, 'message' => 'Application not found.'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred while updating the application.'], 500);
+        }
     }
 
     public function applyProject(Request $request)
