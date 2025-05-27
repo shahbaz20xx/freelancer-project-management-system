@@ -108,26 +108,22 @@
                                         <div class="col-md-4">
                                             <div class="card border-0 p-3 shadow mb-4">
                                                 <div class="card-body">
-                                                    <h3 class="border-0 fs-5 pb-2 mb-0 text-truncate">{{ $project->title }}</h3>
-                                                    <p>{{ Str::words(strip_tags($project->description), $words = 6, '...') }}
+                                                    <h3 class="border-0 fs-5 pb-2 mb-0 text-truncate"><strong>{{ $project->title }}</strong></h3>
+                                                    <p class="text-truncate">{{ $project->description }}
                                                     </p>
                                                     <div class="bg-light p-3 border">
                                                         <p class="mb-0">
                                                             <span class="fw-bolder"><i class="fa fa-map-marker"></i></span>
-                                                            <span class="ps-1">{{ $project->status }}</span>
+                                                            <span class="ps-1"><strong>Status</strong>: {{ $project->status }}</span>
                                                         </p>
                                                         <p class="mb-0">
                                                             <span class="fw-bolder"><i class="fa fa-clock-o"></i></span>
-                                                            <span class="ps-1">{{ $project->budget }}</span>
+                                                            <span class="ps-1"><strong>Budget</strong>: {{ $project->budget }}</span>
                                                         </p>
-
-                                                        @if (!is_null($project->salary))
-                                                            <p class="mb-0">
-                                                                <span class="fw-bolder"><i class="fa fa-usd"></i></span>
-                                                                <span class="ps-1">{{ $project->salary }}</span>
-                                                            </p>
-                                                        @endif
-
+                                                        <p class="mb-0">
+                                                            <span class="fw-bolder"><i class="fa fa-clock-o"></i></span>
+                                                            <span class="ps-1"><strong>Experience</strong>: {{ $project->experience }}</span>
+                                                        </p>
                                                     </div>
 
                                                     <div class="d-grid mt-3">

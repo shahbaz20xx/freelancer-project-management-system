@@ -26,20 +26,20 @@
                             href="{{ route('account.profile') }}">Account Settings</a>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                        <a class="{{ Request::is('account/create-job') ? 'light-green' : '' }}"
-                            href="{{ route('account.profile') }}">Post a Job</a>
+                        <a class="{{ Request::is('account/create-project') ? 'light-green' : '' }}"
+                            href="{{ route('account.profile') }}">Post a Project</a>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                        <a class="{{ Request::is('account/my-jobs') ? 'light-green' : '' }}"
+                        <a class="{{ Request::is('account/my-projects') ? 'light-green' : '' }}"
                             href="{{ route('account.myProjects') }}">My Projects</a>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                        <a class="{{ Request::is('account/my-jobs-applications') ? 'light-green' : '' }}"
-                            href="{{ route('account.profile') }}">Jobs Applied</a>
+                        <a class="{{ Request::is('account/my-projects-applications') ? 'light-green' : '' }}"
+                            href="{{ route('account.myProjectApplications') }}">Projects Applied</a>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                         <a class="{{ Request::is('account/saved-jobs') ? 'light-green' : '' }}"
-                            href="{{ route('account.profile') }}">Saved Jobs</a>
+                            href="{{ route('account.profile') }}">Saved Projects</a>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                         <a href="{{ route('account.logout') }}">Logout</a>

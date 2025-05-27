@@ -33,13 +33,20 @@
                                         <a href="#">
                                             <h4>{{ $project->title }}</h4>
                                         </a>
-                                        <div class="links_locat d-flex align-items-center">
-                                            <div class="location">
-                                                <p> <i class="fa fa-map-marker"></i> {{ $project->location }}</p>
-                                            </div>
-                                            {{-- <div class="location">
-                                                <p> <i class="fa fa-clock-o"></i> {{ $project->projectType->name }}</p>
-                                            </div> --}}
+                                        <div class="links_locat p-3 align-items-center">
+                                            <p class="mb-0">
+                                                <span class="fw-bolder"><i class="fa fa-map-marker"></i></span>
+                                                <span class="ps-1"><strong>Status</strong>: {{ $project->status }}</span>
+                                            </p>
+                                            <p class="mb-0">
+                                                <span class="fw-bolder"><i class="fa fa-clock-o"></i></span>
+                                                <span class="ps-1"><strong>Budget</strong>: {{ $project->budget }}</span>
+                                            </p>
+                                            <p class="mb-0">
+                                                <span class="fw-bolder"><i class="fa fa-clock-o"></i></span>
+                                                <span class="ps-1"><strong>Experience</strong>:
+                                                    {{ $project->experience }}</span>
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -132,7 +139,26 @@
                                                     <td>{{ $application->recruiter->name }}</td>
                                                     <td>{{ $application->recruiter->email }}</td>
                                                     <td>{{ $application->cover_letter }}</td>
-                                                    <td>{{ $application->status }}</td>
+                                                    <td>
+                                                        {{ $application->status }}
+                                                        <div class="d-flex">
+                                                            @if ($application->status === 'pending')
+                                                                <button class="btn btn-success btn-sm m-1"
+                                                                    onclick="updateApplicationStatus({{ $application->id }}, 'accepted')">
+                                                                    Accept
+                                                                </button>
+                                                                <button class="btn btn-danger btn-sm m-1"
+                                                                    onclick="updateApplicationStatus({{ $application->id }}, 'rejected')">
+                                                                    Reject
+                                                                </button>
+                                                            @else
+                                                                <span
+                                                                    class="badge {{ $application->status === 'accepted' ? 'badge-success' : ($application->status === 'rejected' ? 'badge-danger' : 'badge-info') }}">
+                                                                    {{ $application->status }}
+                                                                </span>
+                                                            @endif
+                                                        </div>
+                                                    </td>
                                                     <td> {{ \Carbon\Carbon::parse($application->applied_date)->format('d M, Y') }}
                                                     </td>
                                                 </tr>
@@ -147,7 +173,39 @@
 
                                 </div>
                             </div>
+                        @elseif ($applied == 1)
+                            <div class="card shadow border-0 mt-4">
+                                <div class="project_details_header">
+                                    <div class="single_projects white-bg d-flex justify-content-between">
+                                        <div class="projects_left d-flex align-items-center">
 
+                                            <div class="projects_conetent">
+                                                <h4>Your Application Status</h4>
+                                            </div>
+                                        </div>
+                                        <div class="projects_right"></div>
+                                    </div>
+                                </div>
+                                <div class="descript_wrap white-bg">
+                                    <table class="table table-striped">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Cover Letter</th>
+                                            <th>Application Status</th>
+                                            <th>Applied Date</th>
+                                        </tr>
+                                        <tr>
+                                            <td>{{ $applications->recruiter->name }}</td>
+                                            <td>{{ $applications->recruiter->email }}</td>
+                                            <td>{{ $applications->cover_letter }}</td>
+                                            <td><strong>{{ $applications->status }}</strong></td>
+                                            <td> {{ \Carbon\Carbon::parse($applications->applied_date)->format('d M, Y') }}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
                         @endif
                     @endif
 
@@ -163,14 +221,13 @@
                                     <li>Published on:
                                         <span>{{ \Carbon\Carbon::parse($project->created_at)->format('d M, Y') }}</span>
                                     </li>
-                                    <li>Vacancy: <span>{{ $project->vacancy }} Position</span></li>
 
-                                    @if (!empty($project->salary))
-                                        <li>Salary: <span>{{ $project->salary }}</span></li>
+                                    @if (!empty($project->budget))
+                                        <li>Budget: <span>{{ $project->budget }}</span></li>
                                     @endif
 
-                                    <li>Location: <span>{{ $project->location }}</span></li>
-                                    {{-- <li>project Nature: <span> {{ $project->jobType->name }}</span></li> --}}
+                                    <li>Project Nature: <span> {{ $project->projectType->name }}</span></li>
+                                    <li>Project Category: <span> {{ $project->projectCategory->name }}</span></li>
                                 </ul>
                             </div>
                         </div>
@@ -178,21 +235,13 @@
                     <div class="card shadow border-0 my-4">
                         <div class="project_sumary">
                             <div class="summery_header pb-1 pt-4">
-                                <h3>Company Details</h3>
+                                <h3>Client Details</h3>
                             </div>
                             <div class="project_content pt-3">
                                 <ul>
-                                    <li>Name: <span>{{ $project->company_name }}</span></li>
+                                    <li>Name: <span>{{ $project->client->name }}</span></li>
 
-                                    @if (!empty($project->company_location))
-                                        <li>Locaion: <span>{{ $project->company_location }}</span></li>
-                                    @endif
-
-                                    @if (!empty($project->company_website))
-                                        <li>Webite: <span><a href="{{ $project->company_website }}"
-                                                    target="_blank">{{ $project->company_website }}</a></span></li>
-                                    @endif
-
+                                    <li>Email: <span>{{ $project->client->email }}</span></li>
                                 </ul>
                             </div>
                         </div>
@@ -219,6 +268,43 @@
                     dataType: "json",
                     success: function(response) {
                         window.location.href = "{{ url()->current() }}";
+                    }
+                });
+            }
+        }
+
+        function updateApplicationStatus(applicationId, newStatus) {
+            // Confirmation dialog before sending the AJAX request
+            if (confirm('Are you sure you want to ' + newStatus.toLowerCase() + ' this application?')) {
+                $.ajax({
+                    type: "POST",
+                    // Use a named route for better maintainability.
+                    // You'll need to define 'updateApplicationStatus' route in your web.php
+                    url: '{{ route('updateApplicationStatus') }}',
+                    data: {
+                        id: applicationId,
+                        status: newStatus,
+                        _token: '{{ csrf_token() }}' // Laravel CSRF token for security
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        // Check the response for success message
+                        if (response.success) {
+                            // Reload the current page to reflect the status change
+                            window.location.href = "{{ url()->current() }}";
+                        } else {
+                            // Log or display an error message if the update failed on the server
+                            console.error('Failed to update application status:', response.message);
+                            alert('Error: ' + response
+                                .message); // Use alert for error, but still consider custom modal
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle AJAX errors (e.g., network issues, server errors)
+                        console.error('AJAX Error:', status, error, xhr.responseText);
+                        alert(
+                            'An error occurred while updating the application. Please try again.'
+                        ); // Custom modal better
                     }
                 });
             }
