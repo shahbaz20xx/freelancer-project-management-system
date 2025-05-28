@@ -9,16 +9,16 @@ class Project extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'client_id', 'recruiter_id', 'project_category_id', 'project_type_id', 'status', 'budget', 'billing_type'];
-
-    public function client()
-    {
-        return $this->belongsTo(User::class, 'client_id');
-    }
+    protected $fillable = ['title', 'description', 'recruiter_id', 'talent_id', 'project_category_id', 'project_type_id', 'status', 'budget', 'billing_type'];
 
     public function recruiter()
     {
         return $this->belongsTo(User::class, 'recruiter_id');
+    }
+
+    public function talent()
+    {
+        return $this->belongsTo(User::class, 'talent_id');
     }
 
     public function tasks()

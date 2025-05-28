@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('applications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
-            $table->foreignId('recruiter_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('talent_id')->constrained('users')->onDelete('cascade');
             $table->text('cover_letter')->nullable();
             $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
             $table->timestamps();

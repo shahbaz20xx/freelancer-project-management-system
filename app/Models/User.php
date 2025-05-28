@@ -42,23 +42,23 @@ class User extends \TCG\Voyager\Models\User
         'email_verified_at' => 'datetime',
     ];
 
-    public function clientProjects()
-    {
-        return $this->hasMany(Project::class, 'client_id');
-    }
-
     public function recruiterProjects()
     {
         return $this->hasMany(Project::class, 'recruiter_id');
     }
 
+    public function talentProjects()
+    {
+        return $this->hasMany(Project::class, 'talent_id');
+    }
+
     public function applications()
     {
-        return $this->hasMany(Application::class, 'recruiter_id');
+        return $this->hasMany(Application::class, 'talent_id');
     }
 
     public function invoices()
     {
-        return $this->hasMany(Invoice::class, 'client_id');
+        return $this->hasMany(Invoice::class, 'recruiter_id');
     }
 }

@@ -9,15 +9,15 @@ class Application extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['project_id', 'recruiter_id', 'cover_letter', 'status'];
+    protected $fillable = ['project_id', 'talent_id', 'cover_letter', 'status'];
 
     public function project()
     {
         return $this->belongsTo(Project::class);
     }
 
-    public function recruiter()
+    public function talent()
     {
-        return $this->belongsTo(User::class, 'recruiter_id');
+        return $this->belongsTo(User::class, 'talent_id');
     }
 }

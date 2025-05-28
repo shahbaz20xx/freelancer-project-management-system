@@ -110,7 +110,7 @@
                     </div>
 
                     @if (Auth::user())
-                        @if (Auth::user()->id == $project->client_id)
+                        @if (Auth::user()->id == $project->recruiter_id)
 
                             <div class="card shadow border-0 mt-4">
                                 <div class="project_details_header">
@@ -136,8 +136,8 @@
                                         @if ($applications->isNotEmpty())
                                             @foreach ($applications as $application)
                                                 <tr>
-                                                    <td>{{ $application->recruiter->name }}</td>
-                                                    <td>{{ $application->recruiter->email }}</td>
+                                                    <td>{{ $application->talent->name }}</td>
+                                                    <td>{{ $application->talent->email }}</td>
                                                     <td>{{ $application->cover_letter }}</td>
                                                     <td>
                                                         {{ $application->status }}
@@ -196,8 +196,8 @@
                                             <th>Applied Date</th>
                                         </tr>
                                         <tr>
-                                            <td>{{ $applications->recruiter->name }}</td>
-                                            <td>{{ $applications->recruiter->email }}</td>
+                                            <td>{{ $applications->talent->name }}</td>
+                                            <td>{{ $applications->talent->email }}</td>
                                             <td>{{ $applications->cover_letter }}</td>
                                             <td><strong>{{ $applications->status }}</strong></td>
                                             <td> {{ \Carbon\Carbon::parse($applications->applied_date)->format('d M, Y') }}
@@ -239,9 +239,9 @@
                             </div>
                             <div class="project_content pt-3">
                                 <ul>
-                                    <li>Name: <span>{{ $project->client->name }}</span></li>
+                                    <li>Name: <span>{{ $project->recruiter->name }}</span></li>
 
-                                    <li>Email: <span>{{ $project->client->email }}</span></li>
+                                    <li>Email: <span>{{ $project->recruiter->email }}</span></li>
                                 </ul>
                             </div>
                         </div>

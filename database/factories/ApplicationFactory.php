@@ -39,16 +39,16 @@ class ApplicationFactory extends Factory
         }
         $projectId = $project->id;
 
-        $recruiter = User::inRandomOrder()->first();
-        if (!$recruiter) {
-            $recruiter = User::factory()->create();
+        $talent = User::inRandomOrder()->first();
+        if (!$talent) {
+            $talent = User::factory()->create();
         }
-        $recruiterId = $recruiter->id;
+        $talentId = $talent->id;
 
         $status = 'pending';
 
-        if ($project->recruiter_id !== null) {
-            if ($project->recruiter_id === $recruiterId) {
+        if ($project->talent_id !== null) {
+            if ($project->talent_id === $talentId) {
                 $status = 'accepted';
             } else {
                 $status = 'rejected';
@@ -57,7 +57,7 @@ class ApplicationFactory extends Factory
 
         return [
             'project_id' => $projectId,
-            'recruiter_id' => $recruiterId,
+            'talent_id' => $talentId,
             'cover_letter' => $this->faker->boolean(70) ? $this->faker->paragraph(rand(1, 3)) : null,
             'status' => $status,
         ];

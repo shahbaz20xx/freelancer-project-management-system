@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
-            $table->foreignId('client_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('recruiter_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('recruiter_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('talent_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('project_category_id')->constrained()->onDelete('cascade');
             $table->foreignId('project_type_id')->constrained()->onDelete('cascade');
             $table->text('responsibility')->nullable();

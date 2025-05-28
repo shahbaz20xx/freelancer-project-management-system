@@ -24,8 +24,8 @@ class InvoiceFactory extends Factory
      */
     public function definition()
     {
-        // Get a random existing client. Ensure users are seeded first.
-        $clientId = User::inRandomOrder()->first()->id;
+        // Get a random existing recruiter. Ensure users are seeded first.
+        $recruiterId = User::inRandomOrder()->first()->id;
 
         $projectId = null;
         $taskId = null;
@@ -42,7 +42,7 @@ class InvoiceFactory extends Factory
             // and ensure it meets the status criteria.
             $project = Project::factory()->create([
                 'status' => $this->faker->randomElement(['in_progress', 'completed']),
-                'recruiter_id' => User::inRandomOrder()->first()->id // Ensure recruiter exists for the new project
+                'talent_id' => User::inRandomOrder()->first()->id // Ensure talent exists for the new project
             ]);
             $projectId = $project->id;
             $taskId = null; // Ensure task_id is null for project-based invoices
@@ -82,7 +82,7 @@ class InvoiceFactory extends Factory
         }
 
         return [
-            'client_id' => $clientId,
+            'recruiter_id' => $recruiterId,
             'project_id' => $projectId, // Will be null if task_id is set
             'task_id' => $taskId,       // Will be null if project_id is set
             'amount' => $this->faker->randomFloat(2, 50, 2000),

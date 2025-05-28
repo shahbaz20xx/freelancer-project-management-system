@@ -23,20 +23,20 @@ class ProjectFactory extends Factory
 
     public function definition()
     {
-        $clientId = User::inRandomOrder()->first()->id;
+        $recruiterId = User::inRandomOrder()->first()->id;
 
-        $recruiterId = null;
+        $talentId = null;
         if ($this->faker->boolean(70)) {
-            $recruiterUser = User::where('id', '!=', $clientId)->inRandomOrder()->first();
+            $talentUser = User::where('id', '!=', $recruiterId)->inRandomOrder()->first();
 
-            if ($recruiterUser) {
-                $recruiterId = $recruiterUser->id;
+            if ($talentUser) {
+                $talentId = $talentUser->id;
             }
         }
 
         $possibleStatuses = ['open', 'cancelled'];
 
-        if ($recruiterId !== null) {
+        if ($talentId !== null) {
             $possibleStatuses = ['in_progress', 'completed'];
         }
 
@@ -46,8 +46,8 @@ class ProjectFactory extends Factory
         return [
             'title' => $this->faker->sentence(rand(3, 7)),
             'description' => $this->faker->paragraph(rand(3, 8)),
-            'client_id' => $clientId,
             'recruiter_id' => $recruiterId,
+            'talent_id' => $talentId,
             'project_category_id' => $categoryId,
             'project_type_id' => $typeId,
             'status' => $this->faker->randomElement($possibleStatuses),
@@ -56,11 +56,17 @@ class ProjectFactory extends Factory
             'responsibility' => $this->faker->text(300), // Generates a text of about 300 characters
             'qualifications' => $this->faker->text(300), // Generates a text of about 300 characters
             'experience' => $this->faker->randomElement([
-                '1-2 years',
-                '2-5 years',
-                '5-10 years',
+                '1 years',
+                '2 years',
+                '3 years',
+                '4 years',
+                '5 years',
+                '6 years',
+                '7 years',
+                '8 years',
+                '9 years',
+                '10 years',
                 '10+ years',
-                'Entry-level',
             ]),
         ];
     }

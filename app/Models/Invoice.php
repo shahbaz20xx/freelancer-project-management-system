@@ -9,11 +9,11 @@ class Invoice extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['client_id', 'project_id', 'task_id', 'amount', 'status', 'issued_at', 'due_at'];
+    protected $fillable = ['recruiter_id', 'project_id', 'task_id', 'amount', 'status', 'issued_at', 'due_at'];
 
-    public function client()
+    public function recruiter()
     {
-        return $this->belongsTo(User::class, 'client_id');
+        return $this->belongsTo(User::class, 'recruiter_id');
     }
 
     public function project()

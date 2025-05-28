@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
-use Intervention\Image\Facades\Image;
 
 class UserAccountController extends Controller
 {
@@ -110,7 +109,7 @@ class UserAccountController extends Controller
             $project->title = $request->title;
             $project->project_category_id = $request->category;
             $project->project_type_id = $request->projectType;
-            $project->client_id = Auth::user()->id;
+            $project->recruiter_id = Auth::user()->id;
             $project->budget = $request->budget;
             $project->description = $request->description;
             $project->responsibility = $request->responsibility;
@@ -162,8 +161,6 @@ class UserAccountController extends Controller
             $user = User::find($id);
             $user->name = $request->name;
             $user->email = $request->email;
-            $user->mobile = $request->mobile;
-            $user->designation = $request->designation;
             $user->save();
 
             Session()->flash('success', 'Profile updated successfully');
@@ -183,39 +180,22 @@ class UserAccountController extends Controller
     // /upload/change image from profile
     public function updateProfileImg(Request $request)
     {
-        // dd($request->all());
         $id = Auth::user()->id;
 
         $validator = Validator::make($request->all(), [
-            'image' => 'required|image|max:2048' // Adjust max size as needed
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
+
         if ($validator->passes()) {
 
             $image = $request->image;
-            $ext = $image->getClientOriginalExtension();
-            $imageName = $id . '-' . time() . '.' . $ext;
+            $imageName = $id . '-' . time() . '.' . $request->image->extension();
             $image->move(public_path('/profile_img/'), $imageName);
+            if (Auth::user()->avatar != 'users/default.png') {
+                File::delete(public_path('/profile_img/' . Auth::user()->avatar));
+            }
 
-            // $sourcePath = public_path('/profile_img/'. $imageName);
-            // $manager = new ImageManager(Driver::class);
-            // $image = $manager->read($sourcePath);
-
-            // crop the best fitting 5:3 (150x150) ratio and resize to 150x150 pixel
-            // $image->cover(150, 150);
-            // $image->toPng()->save(public_path('/profile_img/thumb/'. $imageName));
-
-            // This code will create a small thumbnail
-            $sourcePath = public_path() . '/profile_img/' . $imageName;
-            $destPath = public_path() . '/profile_img/thumb/' . $imageName;
-            $image = Image::make($sourcePath);
-            $image->fit(300, 275);
-            $image->save($destPath);
-
-            // delete old profile image, when user update his/her new image
-            File::delete(public_path('/profile_img/' . Auth::user()->image));
-            File::delete(public_path('/profile_img/thumb/' . Auth::user()->image));
-
-            User::where('id', $id)->update(['image' => $imageName]);
+            User::where('id', $id)->update(['avatar' => $imageName]);
 
             Session()->flash('success', 'Profile image updated successfully.');
             return response()->json([
@@ -232,7 +212,7 @@ class UserAccountController extends Controller
 
     public function myProjects()
     {
-        $projects = Project::where('client_id', Auth::user()->id)->with('projectType', 'applications')->orderBy('created_at', 'DESC')->paginate(10);
+        $projects = Project::where('recruiter_id', Auth::user()->id)->with('projectType', 'applications')->orderBy('created_at', 'DESC')->paginate(10);
         return view('account.project.my-projects', [
             'projects' => $projects,
         ]);
@@ -245,7 +225,7 @@ class UserAccountController extends Controller
 
         // If user write another user id through url show him 404 page
         $project = Project::where([
-            'client_id' => Auth::user()->id,
+            'recruiter_id' => Auth::user()->id,
             'id' => $id,
         ])->first();
 
@@ -279,7 +259,7 @@ class UserAccountController extends Controller
             $project->title = $request->title;
             $project->category_id = $request->category;
             $project->project_type_id = $request->projectType;
-            $project->client_id = Auth::user()->id;
+            $project->recruiter_id = Auth::user()->id;
             $project->budget = $request->budget;
             $project->description = $request->description;
             $project->responsibility = $request->responsibility;
@@ -305,7 +285,7 @@ class UserAccountController extends Controller
     public function deleteProject(Request $request)
     {
         $project = Project::where([
-            'client_id' => Auth::user()->id,
+            'recruiter_id' => Auth::user()->id,
             'id' => $request->projectId,
         ])->first();
 
@@ -326,7 +306,7 @@ class UserAccountController extends Controller
     public function myProjectApplications()
     {
 
-        $projectApplications = Application::where('recruiter_id', Auth::user()->id)->with(['project', 'project.projectType', 'project.applications'])->orderBy('created_at', 'DESC')->paginate(10);
+        $projectApplications = Application::where('talent_id', Auth::user()->id)->with(['project', 'project.projectType', 'project.applications'])->orderBy('created_at', 'DESC')->paginate(10);
 
         return view('account.project.my-project-applications', [
             'projectApplications' => $projectApplications,

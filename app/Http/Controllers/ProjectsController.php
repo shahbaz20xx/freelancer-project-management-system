@@ -39,19 +39,19 @@ class ProjectsController extends Controller
 
     public function projectDetail($id)
     {
-        $project = Project::where('id', $id)->with('client', 'projectType', 'projectCategory')->first();
+        $project = Project::where('id', $id)->with('recruiter', 'projectType', 'projectCategory')->first();
 
         if ($project == null) {
             abort(404);
         }
 
-        $applications = Application::where('project_id', $id)->with('recruiter')->get();
+        $applications = Application::where('project_id', $id)->with('talent')->get();
 
         $applied = 0;
         if (Auth::check()) {
             $currentUserId = Auth::user()->id;
             foreach ($applications as $application) {
-                if ($application->recruiter_id === $currentUserId) {
+                if ($application->talent_id === $currentUserId) {
                     $applied = 1;
                     $applications = $application;
                     break;
@@ -106,8 +106,8 @@ class ProjectsController extends Controller
         }
 
         // You can't apply on your own project
-        $client_id = $project->client_id;
-        if ($client_id == Auth::user()->id) {
+        $recruiter_id = $project->recruiter_id;
+        if ($recruiter_id == Auth::user()->id) {
             $message = "You can not apply on your own project";
             Session()->flash('error', $message);
             return response()->json([
@@ -118,7 +118,7 @@ class ProjectsController extends Controller
 
         // User can't apply on a project twise
         $projectApplicationCount = Application::where([
-            'recruiter_id' => Auth::user()->id,
+            'talent_id' => Auth::user()->id,
             'project_id' => $id,
         ])->count();
 
@@ -133,13 +133,13 @@ class ProjectsController extends Controller
 
         $application = new Application();
         $application->project_id = $id;
-        $application->recruiter_id = Auth::user()->id;
+        $application->talent_id = Auth::user()->id;
         $application->cover_letter = 'Applied on your project at ' . now();
         $application->status = 'pending';
         $application->save();
 
         // Send notification email to employer
-        // $employer = User::where('id',$client_id)->first();
+        // $employer = User::where('id',$recruiter_id)->first();
         // $mailData = [
         //     'employer' => $employer,
         //     'user' => Auth::user(),
