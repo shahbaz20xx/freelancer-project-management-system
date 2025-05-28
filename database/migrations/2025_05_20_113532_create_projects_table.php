@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('experience');
             $table->enum('status', ['open', 'in_progress', 'completed', 'cancelled'])->default('open');
             $table->decimal('budget', 10, 2)->nullable();
-            $table->enum('billing_type', ['project', 'task'])->nullable();
+            $table->enum('billing_type', ['project', 'task']);
             $table->timestamps();
         });
     }

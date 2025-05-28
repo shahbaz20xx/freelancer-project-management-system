@@ -21,7 +21,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/projects', [ProjectsController::class, 'index'])->name('projects');
 Route::get('/projects/detail/{id}', [ProjectsController::class, 'projectDetail'])->name('projectDetail');
 
-Route::post('/apply-project',[ProjectsController::class,'applyProject'])->name('applyProject');
+Route::post('/apply-project', [ProjectsController::class, 'applyProject'])->name('applyProject');
 
 
 Route::group(['prefix' => 'admin'], function () {
@@ -35,6 +35,12 @@ Route::group(['middleware' => 'guest'], function () {
     Route::post('/authenticate', [UserAccountController::class, 'authenticate'])->name('account.authenticate');
 });
 
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/create-project', [UserAccountController::class, 'createProject'])->name('account.createProject');
+    Route::post('/upload-project', [UserAccountController::class, 'uploadProject'])->name('account.uploadProject');
+});
+
 Route::get('/profile', [UserAccountController::class, 'profile'])->name('account.profile');
 Route::get('/logout', [UserAccountController::class, 'logout'])->name('account.logout');
 
@@ -46,7 +52,7 @@ Route::post('/change-password', [UserAccountController::class, 'changePassword']
 
 Route::get('/my-projects', [UserAccountController::class, 'myProjects'])->name('account.myProjects');
 Route::post('/delete-project', [UserAccountController::class, 'deleteProject'])->name('account.deleteProject');
-Route::get('/my-projects-applications',[UserAccountController::class,'myProjectApplications'])->name('account.myProjectApplications');
+Route::get('/my-projects-applications', [UserAccountController::class, 'myProjectApplications'])->name('account.myProjectApplications');
 
 // test
 Route::get('/edit-project/edit/{projectId}', [UserAccountController::class, 'editProject'])->name('account.editProject');

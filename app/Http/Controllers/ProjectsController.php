@@ -12,7 +12,7 @@ class ProjectsController extends Controller
 {
     public function index(Request $request)
     {
-        $projects = Project::where('status', 1); // open projects
+        $projects = Project::where('status', 'open'); // open projects
 
         // Search using keyword
         if (!empty($request->keyword)) {

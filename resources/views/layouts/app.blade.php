@@ -46,7 +46,7 @@
                         <a class="btn btn-outline-primary me-2" href="{{ route('account.profile') }}"
                             type="submit">Account</a>
                     @endif
-                    <a class="btn btn-primary" href="{{ route('account.login') }}" type="submit">Post a Job</a>
+                    <a class="btn btn-primary" href="{{ route('account.createProject') }}" type="submit">Post a Project</a>
                 </div>
             </div>
         </nav>

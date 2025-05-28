@@ -80,6 +80,60 @@ class UserAccountController extends Controller
     }
 
 
+    public function createProject()
+    {
+        $project_categories = ProjectCategory::orderBy('name', 'ASC')->where('status', 1)->get();
+        $project_types = ProjectType::orderBy('name', 'ASC')->where('status', 1)->get();
+        return view('account.project.create', [
+            'project_categories' => $project_categories,
+            'project_types' => $project_types,
+        ]);
+    }
+
+
+    public function uploadProject(Request $request)
+    {
+
+        $rules = [
+            'title' => 'required|min:5|max:200',
+            'category' => 'required',
+            'projectType' => 'required',
+            'description' => 'required',
+            'experience' => 'required',
+            'billing_type' => 'required',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->passes()) {
+
+            $project = new Project();
+            $project->title = $request->title;
+            $project->project_category_id = $request->category;
+            $project->project_type_id = $request->projectType;
+            $project->client_id = Auth::user()->id;
+            $project->budget = $request->budget;
+            $project->description = $request->description;
+            $project->responsibility = $request->responsibility;
+            $project->qualifications = $request->qualifications;
+            $project->billing_type = $request->billing_type;
+            $project->experience = $request->experience;
+            $project->billing_type = $request->billing_type;
+            $project->save();
+
+            Session()->flash('success', 'Project added successfully.');
+            return response()->json([
+                'status' => true,
+                'errors' => [],
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors(),
+            ]);
+        }
+    }
+
+
     public function profile()
     {
 
