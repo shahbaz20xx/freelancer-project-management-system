@@ -235,7 +235,7 @@
                     <div class="card shadow border-0 my-4">
                         <div class="project_sumary">
                             <div class="summery_header pb-1 pt-4">
-                                <h3>Client Details</h3>
+                                <h3>Recruiter Details</h3>
                             </div>
                             <div class="project_content pt-3">
                                 <ul>
