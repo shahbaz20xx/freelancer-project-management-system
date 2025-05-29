@@ -165,9 +165,57 @@
                                         @endif
 
                                     </table>
-
                                 </div>
+
                             </div>
+
+                            @if ($project->status != 'open' && $project->talent_id != null)
+                                <div class="card shadow border-0 mt-4">
+                                    <div class="project_details_header">
+                                        <div class="single_projects white-bg d-flex justify-content-between">
+                                            <div class="projects_left d-flex align-items-center">
+
+                                                <div class="projects_conetent">
+                                                    <h4>Generate Invoice per {{ $project->billing_type }}</h4>
+                                                </div>
+                                            </div>
+                                            <div class="projects_right"></div>
+                                        </div>
+                                    </div>
+                                    <div class="descript_wrap white-bg">
+                                        @if ($project->billing_type == 'project')
+                                            <div>
+                                                <div class="d-flex justify-content-between align-items-center m-2">
+                                                    <div class="">
+                                                        <label for="" class="mb-2">Start Date<span
+                                                                class="req">*</span></label>
+                                                        <input type="date" id="startDate" name="startDate">
+                                                        <p></p>
+                                                    </div>
+                                                    <div class="">
+                                                        <label for="" class="mb-2">Due Date<span
+                                                                class="req">*</span></label>
+                                                        <input type="date" id="dueDate" name="dueDate">
+                                                        <p></p>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center m-2">
+                                                    <div class="">
+                                                        <p>Total Amount: {{ $project->budget }}</p>
+                                                    </div>
+                                                    <button class="btn btn-primary"
+                                                        onclick="generateInvoice({{ $project->id }}, 'Project')">Generate
+                                                        Invoice</button>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <div>
+                                                {{-- Add a button that will create a new task with its invoice optional --}}
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
                         @elseif ($applied == 1)
                             <div class="card shadow border-0 mt-4">
                                 <div class="project_details_header">
@@ -200,6 +248,17 @@
                                         </tr>
                                     </table>
                                 </div>
+                            </div>
+                            <div class="descript_wrap white-bg">
+                                @if ($project->billing_type == 'project')
+                                    <div>
+                                        {{-- Show Invoice with info like start and due date & a button for invoice release request --}}
+                                    </div>
+                                @else
+                                    <div>
+                                        {{-- Show Task info with a button for invoice creation and invoice release request if a invoice is already made --}}
+                                    </div>
+                                @endif
                             </div>
                         @endif
                     @endif
@@ -269,38 +328,61 @@
         }
 
         function updateApplicationStatus(applicationId, projectId, newStatus) {
-            // Confirmation dialog before sending the AJAX request
             if (confirm('Are you sure you want to ' + newStatus.toLowerCase() + ' this application?')) {
                 $.ajax({
                     type: "POST",
-                    // Use a named route for better maintainability.
-                    // You'll need to define 'updateApplicationStatus' route in your web.php
                     url: '{{ route('updateApplicationStatus') }}',
                     data: {
                         applicationId: applicationId,
                         projectId: projectId,
                         status: newStatus,
-                        _token: '{{ csrf_token() }}' // Laravel CSRF token for security
+                        _token: '{{ csrf_token() }}'
                     },
                     dataType: "json",
                     success: function(response) {
-                        // Check the response for success message
                         if (response.success) {
-                            // Reload the current page to reflect the status change
                             window.location.href = "{{ url()->current() }}";
                         } else {
-                            // Log or display an error message if the update failed on the server
                             console.error('Failed to update application status:', response.message);
                             alert('Error: ' + response
-                                .message); // Use alert for error, but still consider custom modal
+                                .message);
                         }
                     },
                     error: function(xhr, status, error) {
-                        // Handle AJAX errors (e.g., network issues, server errors)
                         console.error('AJAX Error:', status, error, xhr.responseText);
                         alert(
                             'An error occurred while updating the application. Please try again.'
-                        ); // Custom modal better
+                        );
+                    }
+                });
+            }
+        }
+
+        function generateInvoice(id, type) {
+            if (confirm('Are you sure you want to Generate' + type + ' Based Invoice?')) {
+                $.ajax({
+                    type: "POST",
+                    url: '{{ route('updateApplicationStatus') }}',
+                    data: {
+                        id: id,
+                        type: type.toLowerCase(),
+                        _token: '{{ csrf_token() }}'
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.success) {
+                            window.location.href = "{{ url()->current() }}";
+                        } else {
+                            console.error('Failed to update application status:', response.message);
+                            alert('Error: ' + response
+                                .message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', status, error, xhr.responseText);
+                        alert(
+                            'An error occurred while updating the application. Please try again.'
+                        );
                     }
                 });
             }
