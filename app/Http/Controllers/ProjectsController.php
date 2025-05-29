@@ -69,24 +69,34 @@ class ProjectsController extends Controller
     public function updateApplicationStatus(Request $request)
     {
         $request->validate([
-            'id' => 'required|exists:applications,id',
+            'applicationId' => 'required|exists:applications,id',
+            'projectId' => 'required|exists:projects,id',
             'status' => 'required|in:accepted,rejected',
         ]);
 
-        try {
-            $application = Application::find($request->id);
-
-            if ($application) {
-                $application->status = $request->status;
-                $application->save();
-
-                return response()->json(['success' => true, 'message' => 'Application status updated successfully.']);
-            } else {
-                return response()->json(['success' => false, 'message' => 'Application not found.'], 404);
+        if ($request->status == 'accepted') {
+            $project = Project::where('id', $request->projectId)->with('applications')->first();
+            $project->status = 'in_progress';
+            
+            foreach ($project->applications as $application) {
+                if ($application->id == $request->applicationId) {
+                    $project->talent_id = $application->talent_id;
+                    $application->status = 'accepted';
+                    $application->save();
+                }
+                else {
+                    $application->status = 'rejected';
+                    $application->save();
+                }
             }
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'An error occurred while updating the application.'], 500);
+            $project->save();
+        } else {
+            $application = Application::find($request->applicationId);
+            $application->status = $request->status;
+            $application->save();
         }
+
+        return response()->json(['success' => true, 'message' => 'Application status updated successfully.']);
     }
 
     public function applyProject(Request $request)
@@ -98,6 +108,15 @@ class ProjectsController extends Controller
         // If project not found
         if ($project == null) {
             $message = "Project does not exist";
+            Session()->flash('error', $message);
+            return response()->json([
+                'status' => false,
+                'message' => $message,
+            ]);
+        }
+
+        if ($project->status != 'open') {
+            $message = "You can only apply on open projects";
             Session()->flash('error', $message);
             return response()->json([
                 'status' => false,
@@ -137,15 +156,6 @@ class ProjectsController extends Controller
         $application->cover_letter = 'Applied on your project at ' . now();
         $application->status = 'pending';
         $application->save();
-
-        // Send notification email to employer
-        // $employer = User::where('id',$recruiter_id)->first();
-        // $mailData = [
-        //     'employer' => $employer,
-        //     'user' => Auth::user(),
-        //     'project' => $project,
-        // ];
-        // Mail::to($employer->email)->send(new ProjectNotificationEmail($mailData));
 
         $message = "You have successfully applied.";
         Session()->flash('success', $message);

@@ -36,11 +36,13 @@ class Project extends Model
         return $this->hasOne(Invoice::class); // Assuming one invoice per project
     }
 
-    public function projectType(){
+    public function projectType()
+    {
         return $this->belongsTo(ProjectType::class);
     }
 
-    public function projectCategory(){
+    public function projectCategory()
+    {
         return $this->belongsTo(ProjectCategory::class);
     }
 }

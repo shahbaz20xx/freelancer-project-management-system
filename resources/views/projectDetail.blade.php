@@ -144,18 +144,13 @@
                                                         <div class="d-flex">
                                                             @if ($application->status === 'pending')
                                                                 <button class="btn btn-success btn-sm m-1"
-                                                                    onclick="updateApplicationStatus({{ $application->id }}, 'accepted')">
+                                                                    onclick="updateApplicationStatus({{ $application->id }}, {{ $project->id }}, 'accepted')">
                                                                     Accept
                                                                 </button>
                                                                 <button class="btn btn-danger btn-sm m-1"
-                                                                    onclick="updateApplicationStatus({{ $application->id }}, 'rejected')">
+                                                                    onclick="updateApplicationStatus({{ $application->id }}, {{ $project->id }}, 'rejected')">
                                                                     Reject
                                                                 </button>
-                                                            @else
-                                                                <span
-                                                                    class="badge {{ $application->status === 'accepted' ? 'badge-success' : ($application->status === 'rejected' ? 'badge-danger' : 'badge-info') }}">
-                                                                    {{ $application->status }}
-                                                                </span>
                                                             @endif
                                                         </div>
                                                     </td>
@@ -273,7 +268,7 @@
             }
         }
 
-        function updateApplicationStatus(applicationId, newStatus) {
+        function updateApplicationStatus(applicationId, projectId, newStatus) {
             // Confirmation dialog before sending the AJAX request
             if (confirm('Are you sure you want to ' + newStatus.toLowerCase() + ' this application?')) {
                 $.ajax({
@@ -282,7 +277,8 @@
                     // You'll need to define 'updateApplicationStatus' route in your web.php
                     url: '{{ route('updateApplicationStatus') }}',
                     data: {
-                        id: applicationId,
+                        applicationId: applicationId,
+                        projectId: projectId,
                         status: newStatus,
                         _token: '{{ csrf_token() }}' // Laravel CSRF token for security
                     },

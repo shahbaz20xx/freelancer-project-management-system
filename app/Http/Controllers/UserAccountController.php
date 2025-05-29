@@ -107,15 +107,14 @@ class UserAccountController extends Controller
 
             $project = new Project();
             $project->title = $request->title;
+            $project->description = $request->description;
+            $project->recruiter_id = Auth::user()->id;
             $project->project_category_id = $request->category;
             $project->project_type_id = $request->projectType;
-            $project->recruiter_id = Auth::user()->id;
-            $project->budget = $request->budget;
-            $project->description = $request->description;
             $project->responsibility = $request->responsibility;
             $project->qualifications = $request->qualifications;
-            $project->billing_type = $request->billing_type;
             $project->experience = $request->experience;
+            $project->budget = $request->budget;
             $project->billing_type = $request->billing_type;
             $project->save();
 
