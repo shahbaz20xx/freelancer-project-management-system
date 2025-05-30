@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProjectsController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserAccountController;
 use Illuminate\Support\Facades\Route;
 use TCG\Voyager\Facades\Voyager;
@@ -54,5 +56,15 @@ Route::group(['prefix' => 'account'], function () {
         //test
         Route::get('/edit-project/edit/{projectId}', [UserAccountController::class, 'editProject'])->name('account.editProject');
         Route::post('/update-project/{projectId}', [UserAccountController::class, 'updateProject'])->name('account.updateProject');
+
+        Route::post('/generate-invoice', [InvoiceController::class, 'generateInvoice'])->name('generateInvoice');
+        //update request-release action logic
+        Route::post('/invoices/request-release', [InvoiceController::class, 'requestRelease'])->name('invoices.requestRelease');
+        //test
+        Route::post('/invoices/generate-for-task', [InvoiceController::class, 'generateInvoiceForTask'])->name('invoices.generateForTask');
+        
+        //test
+        Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
+        Route::post('/tasks/mark-complete', [TaskController::class, 'markComplete'])->name('tasks.markComplete');
     });
 });

@@ -39,25 +39,30 @@ class ProjectsController extends Controller
 
     public function projectDetail($id)
     {
-        $project = Project::where('id', $id)->with('recruiter', 'projectType', 'projectCategory')->first();
+        $project = Project::where('id', $id)->with('recruiter', 'projectType', 'projectCategory', 'invoice', 'tasks.invoice')->first();
 
         if ($project == null) {
             abort(404);
         }
 
-        $applications = Application::where('project_id', $id)->with('talent')->get();
-
         $applied = 0;
+        $applications = [];
+
         if (Auth::check()) {
-            $currentUserId = Auth::user()->id;
-            foreach ($applications as $application) {
-                if ($application->talent_id === $currentUserId) {
+            if (Auth::user()->id == $project->recruiter_id) {
+                $applications = Application::where('project_id', $id)
+                    ->with('talent')
+                    ->get();
+            } else {
+                $applications = Application::where('talent_id', Auth::user()->id)
+                    ->where('project_id', $id)
+                    ->first();
+                if ($applications) {
                     $applied = 1;
-                    $applications = $application;
-                    break;
                 }
             }
         }
+
 
         return view('projectDetail', [
             'project' => $project,

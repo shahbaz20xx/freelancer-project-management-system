@@ -9,7 +9,7 @@ class Project extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'recruiter_id', 'talent_id', 'project_category_id', 'project_type_id', 'status', 'budget', 'billing_type'];
+    protected $fillable = ['title', 'description', 'recruiter_id', 'talent_id', 'project_category_id', 'project_type_id', 'status', 'budget', 'experience', 'responsibility', 'qualifications', 'billing_type'];
 
     public function recruiter()
     {
